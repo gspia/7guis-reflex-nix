@@ -1,0 +1,53 @@
+name:                7guis-reflex
+version:             0.1.0.0
+-- synopsis:
+-- description:
+author:              Moritz Drexl
+maintainer:          mdrexl@fastmail.fm
+-- copyright:
+category:            Development
+build-type:          Simple
+-- extra-source-files:
+cabal-version:       >=1.10
+
+executable 7guis-reflex
+  main-is:             Main.hs
+  hs-source-dirs:      src
+  ghcjs-options:       -Wall
+  default-language:    Haskell2010
+  other-modules:       Utils
+                     , Widgets
+                     , GUIs.Counter
+                     , GUIs.TemperatureConverter
+                     , GUIs.FlightBooker
+                     , GUIs.Timer
+                     , GUIs.CRUD
+                     , GUIs.CircleDrawer
+                     , GUIs.CircleDrawer.Stack
+                     , GUIs.Cells
+                     , GUIs.Cells.Parser
+                     , GUIs.Cells.References
+                     , GUIs.Cells.Sheet
+                     , GUIs.Cells.Types
+  other-extensions:    TemplateHaskell
+                     , OverloadedStrings
+  build-depends:       array
+                     , base
+                     , containers
+                     , Decimal
+                     , either
+                     -- , file-embed
+                     , ghcjs-dom
+                     , mtl
+                     , parsec
+                     , reflex
+                     , reflex-dom-core
+                     , safe
+                     , text
+                     , time
+                     , ghcjs-dom
+                     , jsaddle  >= 0.8.0.0 && < 0.10
+  if impl(ghcjs)
+    build-depends:       ghcjs-base
+  else
+    build-depends:       jsaddle-webkit2gtk >= 0.8.0.0 && < 0.10
