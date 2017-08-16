@@ -17,34 +17,40 @@ implementation of the [7GUIs](https://github.com/eugenkiss/7guis/wiki).
 Here are the steps shortly:
 - Install reflex-platform.
 - Get these sources with git clone and cd to it.
-- Update the paths to reflex-platform on files ./workOnGHCJS.sh 
-  and ./workOnGHC.sh (last lines).
+- Update the paths to reflex-platform on files `./workOnGHCJS.sh` 
+  and `./workOnGHC.sh` (last lines).
 
 
 Then to build this with ghcjs
 
+```
   $ ./workOnGHCJS.sh
   $ cabal configure --ghcjs
   $ cabal build
+```
 
 Open file dist/build/7guis-reflex/7guis-reflex.jsexe/index.html with your 
 browser (ctrl-o).
 
 ## Build with GHC
 
+```
   $ ./workOnGHC.sh
   $ cabal configure --builddir=dist-ghc
   $ cabal build --builddir=dist-ghc
+```
 
 Start the program with
 
+```
   $ dist-ghc/build/7guis-reflex/7guis-reflex
+```
 
 
 ## Notes
 
 Webkit2gtk implementation seems to be a bit fragile (e.g. try "Inspect element"
-or resizing the window, at least on Mint (aug 2017)).
+or resizing the window, at least on Mint as of writing these notes).
 
 Why to make it work for both ghc and ghcjs? Hopefully the working ghc would mean 
 that ghcid can also be used, thus helping the workflow a lot. (And in this way 
@@ -80,7 +86,9 @@ ghcjs (this may not be a nix-problem).
 
 About conventions, see:
 [ad hoc -env](https://nixos.org/nixpkgs/manual/#how-to-create-ad-hoc-environments-for-nix-shell)
-[own pkgs](https://nixos.org/nixpkgs/manual/#how-to-create-nix-builds-for-your-own-private-haskell-packages)
+and
+[own pkgs](https://nixos.org/nixpkgs/manual/#how-to-create-nix-builds-for-your-own-private-haskell-packages).
 
-The nix2-directory contains things not working.
+The nix2-directory contains things not working (trials to use if-then-else
+and deliver attributes/arguments).
 
