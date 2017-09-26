@@ -15,8 +15,11 @@ import           Data.Monoid
 import           Data.Text (Text)
 import qualified Data.Text as T
 
-import           Utils
+-- import           Utils
 import           Widgets
+
+import           Reflex.Dom.HTML5.Elements (eDivN, eLiD', eUlN)
+import           Reflex.Dom.HTML5.Attrs (style)
 
 data Person = Person Text Text -- name surname
 
@@ -51,7 +54,7 @@ selected (DB persons sel _) = if Map.member sel persons
     else Nothing
 
 crud :: MonadWidget t m => m ()
-crud = el "div" $ do
+crud = eDivN $ do
     text "Name:"
     name <- textInput def
     text "Surname:"
@@ -67,10 +70,14 @@ crud = el "div" $ do
         selectedPerson <- (return . fmap selected) db
         isPersonSelected <- (return . fmap isJust) selectedPerson
 
-        select <- el "ul" $ selectableList selectedPerson persons $ \sel p -> do
-          -- attrs <- mapDyn (\s -> monoidGuard s $ "style" =: "font-weight: bold") sel
-          attrs <- (return . fmap (\s -> monoidGuard s $ "style" =: "font-weight: bold")) sel
-          domEvent Click . fst <$> elDynAttr' "li" attrs (display p)
+        select <- eUlN $ selectableList selectedPerson persons $ \sel p -> do
+          -- attrs <- (return . fmap (\s -> monoidGuard s $ "style" =: "font-weight: bold")) sel
+          -- attrs <- (return . fmap (\s -> monoidGuard s $
+          attrs <- (return . fmap (\s ->
+            if s
+               then style "font-weight: bold" $ def
+               else def )) sel
+          domEvent Click . fst <$> eLiD' attrs (display p)
 
         createClick <- button "Create"
         updateClick <- maybeButton isPersonSelected "Update"

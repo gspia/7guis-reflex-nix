@@ -15,13 +15,15 @@ import           Data.Time.Clock (UTCTime)
 
 import           Widgets
 
+import           Reflex.Dom.HTML5.Elements (eDivN)
+-- import           Reflex.Dom.HTML5.Attrs
 
 data TimerEvent
   = TimerTick Decimal -- limit
   | TimerReset
 
 timer :: MonadWidget t m => UTCTime -> m ()
-timer t0 = el "div" $ do
+timer t0 = eDivN $ do
     tick <- tickLossy 0.1 t0
 
     text "Limit:"
@@ -29,7 +31,6 @@ timer t0 = el "div" $ do
     limitDyn <- holdDyn 10.0 limit
 
     rec let events = leftmost
-              -- [ (\(limit', _) -> TimerTick limit') <$> attachDyn limitDyn tick
               [ (\(limit', _) -> TimerTick limit') <$> attachPromptlyDyn limitDyn tick
               , const TimerReset <$> reset
               ]

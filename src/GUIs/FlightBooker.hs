@@ -18,6 +18,9 @@ import qualified Data.Text as T
 import           Utils
 import           Widgets
 
+import           Reflex.Dom.HTML5.Elements
+-- import           Reflex.Dom.HTML5.Attrs
+
 data FlightType
     = OneWay
     | Return
@@ -30,7 +33,7 @@ flightTypeMap = Map.fromList
     ]
 
 flightBooker :: MonadWidget t m => m ()
-flightBooker = el "div" $ do
+flightBooker = eDivN $ do
 
     flightType <- dropdown OneWay (constDyn flightTypeMap) def
 
@@ -48,7 +51,7 @@ flightBooker = el "div" $ do
         (OneWay, Just s, _) ->
             Just $ "You have booked a one-way flight on " <> show s <> "."
         (Return, Just s, Just e) -> if s < e
-            then Just $ "You have booked a return trip from " <> show s <> " to " <> show s <> "."
+            then Just $ "You have booked a return trip from " <> show s <> " to " <> show e <> "."
             else Nothing
         _ ->
             Nothing

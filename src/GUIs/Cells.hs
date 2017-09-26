@@ -25,6 +25,9 @@ import           GUIs.Cells.Types
 
 import           Utils
 
+import           Reflex.Dom.HTML5.Elements
+import           Reflex.Dom.HTML5.Attrs (addClass, style)
+
 updateSheetState :: (Coords, Text) -> SheetState
                  -> (SheetState, Either Text (Map Coords CellResult))
 updateSheetState (coords, expr) oldState = runSheet oldState (eval coords expr)
@@ -80,32 +83,36 @@ cell :: MonadWidget t m
      -> Event t CellResult
      -> m (Event t Text)
 cell (Coords i j) initialResult resultUpdate =
-    let attrs = Map.fromList
-          [ ("style", "left:" <> ((T.pack . show) (i * 210)) <> "px;top:" <> ((T.pack . show) (j * 70) <> "px"))
-          , ("class", "cell")
-          ]
-    in elAttr "div" attrs $ do
-      raw <- elClass "div" "cellInput" $ textInput def
+    eDiv aC $ do
+      raw <- eDiv (addClass "cellInput" def) $ textInput def
       cellResult <- holdDyn initialResult resultUpdate
       cellResultText <- (return . fmap showCellResult) cellResult
       -- cellResultText <- mapDyn showCellResult cellResult
-      elClass "div" "cellResult" $ dynText cellResultText
+      eDiv (addClass "cellResult" def) $ dynText cellResultText
       pure $ _textInput_input raw
+  where
+    aC = addClass "cell" $
+      style styStr $
+      def
+    styStr = "left:"
+      <> ((T.pack . show) (i * 210))
+      <> "px;top:"
+      <> ((T.pack . show) (j * 70) <> "px")
 
 sheet :: MonadWidget t m
       => Map Coords CellResult
       -> Event t (Map Coords CellResult)
       -> m (Event t (Coords, Text))
-sheet initialResults updateResults = elClass "div" "sheet" $ do
+sheet initialResults updateResults = eDiv (addClass "sheet" def) $ do
     dynEventMap <- listWithKeyShallowDiff initialResults (fmap Just <$> updateResults) $ \c v e -> cell c v e
     -- dynEvent <- mapDyn (leftmost . map (\(k, e) -> (\ex -> (k, ex)) <$> e) . Map.toList) dynEventMap
     dynEvent <- (return . fmap (leftmost . map (\(k, e) -> (\ex -> (k, ex)) <$> e) . Map.toList)) dynEventMap
     pure $ switchPromptlyDyn dynEvent
 
 cells :: MonadWidget t m => m ()
-cells = el "div" $ mdo
+cells = eDivN $ mdo
   text "Reference other cells with {i,j}, for example top-left is {0,0}. "
-  el "br" $ blank
+  eBr_
   text "(Available ops: +, -, * and / )"
   dynError <- holdDyn T.empty $ fmap (either ("Error: " <>) (const "")) eventMap
   dynText dynError

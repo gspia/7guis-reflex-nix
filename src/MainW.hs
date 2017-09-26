@@ -1,8 +1,9 @@
-{-# LANGUAGE CPP                 #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Main where
 
-import           Reflex.Dom.Core
+module MainW where
+
+import           Reflex.Dom.Core (MonadWidget, mainWidgetWithCss,
+                                 el, text)
 
 import           Control.Monad.IO.Class    (liftIO)
 
@@ -11,28 +12,16 @@ import           Data.Text (Text)
 import           Data.Text.Encoding        (encodeUtf8)
 import           Data.Time.Clock           (getCurrentTime)
 
-import           GUIs.Cells
-import           GUIs.CircleDrawer
-import           GUIs.Counter
-import           GUIs.CRUD
-import           GUIs.FlightBooker
-import           GUIs.TemperatureConverter
-import           GUIs.Timer
+import           GUIs.Cells (cells)
+import           GUIs.CircleDrawer (circleDrawer, circleDrawer2)
+import           GUIs.Counter (counter)
+import           GUIs.CRUD (crud)
+import           GUIs.FlightBooker (flightBooker)
+import           GUIs.TemperatureConverter (temperatureConverter)
+import           GUIs.Timer (timer)
 
-import Language.Javascript.JSaddle (JSM, liftJSM)
+import Language.Javascript.JSaddle (JSM)
 
-#ifdef ghcjs_HOST_OS
-#else
-import Language.Javascript.JSaddle.WebKitGTK (run)
-#endif
-
-
-main :: IO ()
-#ifdef ghcjs_HOST_OS
-main = liftJSM mainW
-#else
-main = run mainW
-#endif
 
 -- mainW :: UTCTime -> JSM ()
 -- mainW tStart = do

@@ -12,41 +12,6 @@ implementation of the [7GUIs](https://github.com/eugenkiss/7guis/wiki).
 - etc.
 
 
-## Build with GHCJS
-
-Here are the steps shortly:
-- Install reflex-platform.
-- Get these sources with git clone and cd to it.
-- Update the paths to reflex-platform on files `./workOnGHCJS.sh` 
-  and `./workOnGHC.sh` (last lines).
-
-
-Then to build this with ghcjs
-
-```
-  $ ./workOnGHCJS.sh
-  $ cabal configure --ghcjs
-  $ cabal build
-```
-
-Open file dist/build/7guis-reflex/7guis-reflex.jsexe/index.html with your 
-browser (ctrl-o).
-
-## Build with GHC
-
-```
-  $ ./workOnGHC.sh
-  $ cabal configure --builddir=dist-ghc
-  $ cabal build --builddir=dist-ghc
-```
-
-Start the program with
-
-```
-  $ dist-ghc/build/7guis-reflex/7guis-reflex
-```
-
-
 ## Notes
 
 Webkit2gtk implementation seems to be a bit fragile (e.g. try "Inspect element"
@@ -66,29 +31,58 @@ scroll-position seems to affect, can be seen with ghcjs and ghc). With
 `wrapDomEvent` it works ok.
 
 
-## Nix notes
+## Installation and building
 
-The default.nix was obtained with `cabal2nix`. There are some difficulties
-on how the cabal2nix reads cabal-files, which is the reason for two versions
-of default.nix-files.
+First, 
+```
+git clone https://github.com/gspia/7guis-reflex-nix.git
+```
+after which you have the following four options.
 
-The two shell-scripts are used to copy an appropriate default.nix in place so 
-that the `work-on` of reflex-platform would initialize the correct packages 
-into nix-shell.
+  1) use the work-on -script provided at reflex-platform
+  2) nix-build with ghcjs as default compiler
+  3) nix-shell with ghc as default compiler
+  4) nix-shell with ghcjs 
 
-(If it is possible to make conditional default.nix, e.g. by checking somehow 
-if the environment is for ghc or ghcjs, we could get rid of the shell scripts. 
-Nix-expressions are new to me at the moment (aug 2017) so I don't know yet, how 
-to do it. -> things to do then)
 
-There was a compilation problem with file-embed-package with ghc but not with 
-ghcjs (this may not be a nix-problem).
+The first one requires obtaining
+[reflex-platform](https://github.com/reflex-frp/reflex-platform).  
 
-About conventions, see:
-[ad hoc -env](https://nixos.org/nixpkgs/manual/#how-to-create-ad-hoc-environments-for-nix-shell)
-and
-[own pkgs](https://nixos.org/nixpkgs/manual/#how-to-create-nix-builds-for-your-own-private-haskell-packages).
+The following commands work (items 1,2 and 3 above)
+```
+path-to-reflex-platform/work-on ghc ./7guis-reflex.nix
+nix-build
+nix-shell
+```
+while
+```
+path-to-reflex-platform/work-on ghcjs ./7guis-reflex.nix
+path-to-reflex-platform/work-on ghcjs ./7guis-reflex.nix --argstr "compiler" "ghcjs" --argstr "ghcjs-base" "ghcjs-base"
+```
+don't. Note that
+```
+nix-shell --argstr "compiler" "ghcjs" 
+```
+does work, this is the item 4) above. In this case, in nix-shell, it is 
+possible to
+```
+cabal configure --ghcjs
+cabal build
+```
+and results be found somewhere from dist-directory.
 
-The nix2-directory contains things not working (trials to use if-then-else
-and deliver attributes/arguments).
+If using 1) `path-to-reflex-platform/work-on ghc ./7guis-reflex.nix`
+then you can start 
+```
+./dev-server.sh
+```
+which starts ghcid and auto-updates web page (results) at localhost:8000.
+```
+cabal configure
+cabal build
+```
+can be used (there are two exes, one is the same that dev-server is 
+using, the wai-one, and another using webkit2gtk).
 
+The item 2) makes a result-directory and there you may find
+the index.html and js-files.

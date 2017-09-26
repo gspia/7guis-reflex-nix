@@ -26,6 +26,8 @@ import           GUIs.CircleDrawer.Stack
 import           Utils
 import           Widgets
 
+import           Reflex.Dom.HTML5.Elements
+-- import           Reflex.Dom.HTML5.Attrs
 
 data Circle = Circle Int Int Int -- x y radius
 
@@ -87,7 +89,7 @@ circle selected circleDyn = do
 
 
 circleDrawer :: MonadWidget t m => m ()
-circleDrawer = el "div" $ mdo
+circleDrawer = eDivN $ mdo
     stack <- foldDyn updateStack initialStack commands
     -- state <- mapDyn (foldStack initialState updateState) stack
     -- selectedCircle <- mapDyn getSelected state
@@ -126,7 +128,7 @@ circleDrawer = el "div" $ mdo
     pure ()
 
 circleDrawer2 :: MonadWidget t m => m ()
-circleDrawer2 = el "div" $ mdo
+circleDrawer2 = eDivN $ mdo
     stack <- foldDyn updateStack initialStack commands
     state <- (return . fmap (foldStack initialState updateState)) stack
     selectedCircle <- (return . fmap getSelected) state

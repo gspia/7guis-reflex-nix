@@ -12,8 +12,11 @@ import qualified Data.Text as T
 
 import           Widgets
 
+import           Reflex.Dom.HTML5.Elements (eDivN)
+-- import           Reflex.Dom.HTML5.Attrs
+
 temperatureConverter :: MonadWidget t m => m ()
-temperatureConverter = el "div" $ mdo
+temperatureConverter = eDivN $ mdo
     celsius <- readableInput $ def & textInputConfig_setValue
         .~ ((\x -> (T.pack . show) $ ((x :: Double) - 32) * 5/9) <$> fahrenheit)
     text "Celsius = "

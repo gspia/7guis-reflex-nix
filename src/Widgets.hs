@@ -19,10 +19,15 @@ import           Text.Read        (readMaybe)
 
 import           Utils
 
+import           Reflex.Dom.HTML5.Elements (eButtonD')
+import           Reflex.Dom.HTML5.Attrs (disabled)
+
+
 readableInput :: (MonadWidget t m, Read a) => TextInputConfig t -> m (Event t a)
 readableInput conf = do
     c <- textInput conf
     pure $ fmapMaybe (readMaybe . T.unpack) $ _textInput_input c
+
 
 maybeButton :: MonadWidget t m
             => Dynamic t Bool
@@ -31,9 +36,13 @@ maybeButton :: MonadWidget t m
             -- ^ Static button label
             -> m (Event t ())
 maybeButton enabled label = do
-    -- attrs <- forDyn enabled $ \e -> monoidGuard (not e) $ "disabled" =: "disabled"
-    attrs <- (return . ffor enabled) $ \e -> monoidGuard (not e) $ "disabled" =: "disabled"
-    (btn, _) <- elDynAttr' "button" attrs $ text label
+    -- attrs <- (return . ffor enabled) $ \e -> monoidGuard (not e) $ "disabled" =: "disabled"
+    attrs <- (return . ffor enabled) $ \e ->
+      if not e
+         then disabled def
+         else def
+    -- (btn, _) <- elDynAttr' "button" attrs $ text label
+    (btn, _) <- eButtonD' attrs $ text label
     pure $ domEvent Click btn
 
 datePicker :: MonadWidget t m

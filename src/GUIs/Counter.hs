@@ -7,8 +7,11 @@ import           Reflex
 import           Reflex.Dom.Core
 import qualified Data.Text as T
 
+import           Reflex.Dom.HTML5.Elements
+-- import           Reflex.Dom.HTML5.Attrs
+
 counter :: MonadWidget t m => m ()
-counter = el "div" $ do
+counter = eDivN $ do
 
   click <- button "Click"
   c <- count click
