@@ -69,9 +69,9 @@ possible to
 cabal configure --ghcjs
 cabal build
 ```
-and results be found somewhere from dist-directory.
+and results can be found somewhere from dist-directory.
 
-If using 1) `path-to-reflex-platform/work-on ghc ./7guis-reflex.nix`
+If using 1), that is, `path-to-reflex-platform/work-on ghc ./7guis-reflex.nix`
 then you can start 
 ```
 ./dev-server.sh
