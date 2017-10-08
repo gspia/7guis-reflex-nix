@@ -20,7 +20,7 @@ import           Text.Read        (readMaybe)
 import           Utils
 
 import           Reflex.Dom.HTML5.Elements (eButtonD')
-import           Reflex.Dom.HTML5.Attrs (disabled)
+import           Reflex.Dom.HTML5.Attrs (disabled, style)
 
 
 readableInput :: (MonadWidget t m, Read a) => TextInputConfig t -> m (Event t a)
@@ -54,8 +54,10 @@ datePicker enabled = do
         -- date <- mapDyn ((parseTimeM True defaultTimeLocale "%F") . T.unpack) $ _textInput_value raw
         date <- (return . fmap ((parseTimeM True defaultTimeLocale "%F") . T.unpack)) $ _textInput_value raw
         attrs <- dynCombine date enabled $ \d e ->
-            monoidGuard (isNothing d) ("style" =: "color: red") <>
-            monoidGuard (not e) ("disabled" =: "disabled")
+          -- monoidGuard (isNothing d) (style "color: red" $ def) <>
+          -- monoidGuard (not e) (disabled def)
+          monoidGuard (isNothing d) ("style" =: "color: red") <>
+          monoidGuard (not e) ("disabled" =: "disabled")
     return date
 
 selectableList :: (MonadWidget t m, Ord k)

@@ -1,6 +1,9 @@
 { reflex-platform ? import ./reflex-platform.nix
+# , reflex-dom-htmlea ? import ./reflex-dom-htmlea.nix
+# , reflex-dom-htmlea ? (import <nixpkgs> {}).haskellPackages.reflex-dom-htmlea
 , compiler ? "ghcjs"
 } :
+# , reflex-dom-htmlea ? import ./reflex-dom-htmlea.nix
 # Note that default has ghcjs as default compiler while 
 # shell.nix has ghc. This way we can use ghcid and some other tools
 # while developing (e.g. using the work-on ghc -script).
@@ -17,18 +20,10 @@ let
   /*   }; */
   /* }; */
   /* reflex-platform = import sources.reflex-platform {}; */
-  sources = {
-    reflex-dom-htmlea = initialNixpkgs.pkgs.fetchFromGitHub { 
-      owner  = "gspia";
-      repo   = "reflex-dom-htmlea";
-      rev    = "53792a6eb890b80ada638d9f732aa77717d6451a";
-      sha256 = "18mpk3y2hjldiwpsa1as0s2q58y78wpw9dzbvwd4rcxxg5q58y1j";
-    };
-  };
-  reflex-dom-htmlea = import sources.reflex-dom-htmlea {};
 
   pkgs  = reflex-platform.nixpkgs.pkgs;
   hpkgs = initialNixpkgs.pkgs.haskellPackages;
+  hLib =  initialNixpkgs.haskell.lib;
 
   indexHtml = ''
     <!DOCTYPE html>
@@ -49,6 +44,10 @@ let
       hpkgs.cabal-install
     ];
     executableToolDepends = [pkgs.closurecompiler pkgs.zopfli];
+    # extraLibraries = [ reflex-dom-htmlea ];
+    # buildDepends = [ reflex-dom-htmlea ];
+    # setupHaskellDepends = [ reflex-dom-htmlea ];
+    # pkgconfigDepends = [ reflex-dom-htmlea ];
     doHaddock = false;
     postInstall = ''
       mkdir -p $out
@@ -78,6 +77,7 @@ let
   adjust-for-ghc = drv: {
     executableSystemDepends = [
       reflex-platform.${compiler}.ghcid
+      reflex-platform.${compiler}.cabal-install
       hpkgs.ghc-mod
       hpkgs.hasktags
       hpkgs.haskdogs  # stack config set system-ghc --global true
@@ -87,6 +87,10 @@ let
       hpkgs.pointful
       /* hpkgs.stack */
     ];
+    # extraLibraries = [ reflex-dom-htmlea ];
+    # buildDepends = [ reflex-dom-htmlea ];
+    # setupHaskellDepends = [ reflex-dom-htmlea ];
+    # pkgconfigDepends = [ reflex-dom-htmlea ];
     /* executableHaskellDepends = [ */
     /* ]; */
   };
@@ -100,15 +104,25 @@ let
     overrides = (self: super: {
       ghc = super.ghc // { withPackages = super.ghc.withHoogle; };
       ghcWithPackages = self.ghc.withPackages;
+      /* reflex-dom-htmlea = hLib.dontHaddock */ 
+      /*   (hLib.dontCheck (self.callCabal2nix "reflex-dom-htmlea" ( */
+      reflex-dom-htmlea = hLib.dontHaddock 
+        (self.callCabal2nix "reflex-dom-htmlea" (
+          initialNixpkgs.pkgs.fetchFromGitHub { 
+            owner  = "gspia";
+            repo   = "reflex-dom-htmlea";
+            rev = "502b7f1478a65f643af3391ba8d0df1883872aff";
+            sha256 = "1w7qp2kpfp0ivm5xlfafsik21wx7yhh3q7prdn369b1p3zrni5cr";
+          }
+      ) { } );
     });
   };
-
   sevenGuis-reflex-code-base = 
     haskellPackages.callPackage ./7guis-reflex.nix { 
       inherit compiler; 
-      inherit reflex-dom-htmlea; 
-  };
+      /* inherit reflex-dom-htmlea; */ 
+    };
   sevenGuis-reflex-code = 
-    pkgs.haskell.lib.overrideCabal sevenGuis-reflex-code-base adjust;
+   pkgs.haskell.lib.overrideCabal sevenGuis-reflex-code-base adjust;
 in
   sevenGuis-reflex-code

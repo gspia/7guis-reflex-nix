@@ -6,8 +6,8 @@
     , compiler ? "ghc"
     , ghcjs-base 
     , jsaddle-webkit2gtk 
-    , reflex-dom-htmlea ? ""
-    # , reflex-dom-htmlea ? (import <nixpkgs> {}).haskellPackages.reflex-dom-htmlea
+    # , reflex-dom-htmlea 
+    , reflex-dom-htmlea ? (import <nixpkgs> {}).haskellPackages.reflex-dom-htmlea
 }:
 mkDerivation {
     pname = "7guis-reflex";

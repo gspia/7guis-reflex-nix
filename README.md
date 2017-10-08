@@ -31,7 +31,25 @@ scroll-position seems to affect, can be seen with ghcjs and ghc). With
 `wrapDomEvent` it works ok.
 
 
-## Installation and building
+## Installation and building (mostly TBD/WIP-things ATM)
+
+
+First, 
+```
+git clone https://github.com/gspia/7guis-reflex-nix.git
+```
+after which you can:
+```
+nix-build
+```
+or 
+```
+nix-shell --argstr "compiler" "ghcjs"
+```
+
+
+### TBD/WIP
+
 
 First, 
 ```
