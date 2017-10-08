@@ -78,13 +78,13 @@ let
     executableSystemDepends = [
       reflex-platform.${compiler}.ghcid
       reflex-platform.${compiler}.cabal-install
-      hpkgs.ghc-mod
-      hpkgs.hasktags
-      hpkgs.haskdogs  # stack config set system-ghc --global true
-      hpkgs.hdevtools
-      hpkgs.hlint
-      hpkgs.pointfree
-      hpkgs.pointful
+      /* hpkgs.ghc-mod */
+      /* hpkgs.hasktags */
+      /* hpkgs.haskdogs  # stack config set system-ghc --global true */
+      /* hpkgs.hdevtools */
+      /* hpkgs.hlint */
+      /* hpkgs.pointfree */
+      /* hpkgs.pointful */
       /* hpkgs.stack */
     ];
     # extraLibraries = [ reflex-dom-htmlea ];

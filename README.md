@@ -19,7 +19,7 @@ or resizing the window, at least on Mint as of writing these notes).
 
 Why to make it work for both ghc and ghcjs? Hopefully the working ghc would mean 
 that ghcid can also be used, thus helping the workflow a lot. (And in this way 
-there is no need for separate executables thus simplifign cabal a tiny bit. Nor
+there is no need for separate executables thus simplifying cabal a tiny bit. Nor
 there is a need for separate main-files.)
 
 The cells-example ("mini-excel") has something waiting for a fix: the first 
@@ -40,11 +40,13 @@ git clone https://github.com/gspia/7guis-reflex-nix.git
 ```
 after which you can:
 ```
-nix-build
+nix-build 
 ```
 or 
 ```
-nix-shell --argstr "compiler" "ghcjs"
+nix-shell 
+nix-shell --argstr compiler ghcjs
+nix-build --argstr compiler ghc
 ```
 
 

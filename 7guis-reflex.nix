@@ -11,7 +11,7 @@
 }:
 mkDerivation {
     pname = "7guis-reflex";
-    version = "0.1.1.0";
+    version = "0.1.1.1";
     src = ./.;
     isLibrary = true;
     isExecutable = true;
