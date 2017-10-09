@@ -78,21 +78,22 @@ let
     executableSystemDepends = [
       reflex-platform.${compiler}.ghcid
       reflex-platform.${compiler}.cabal-install
-      /* hpkgs.ghc-mod */
-      /* hpkgs.hasktags */
-      /* hpkgs.haskdogs  # stack config set system-ghc --global true */
-      /* hpkgs.hdevtools */
-      /* hpkgs.hlint */
-      /* hpkgs.pointfree */
-      /* hpkgs.pointful */
+    ];
+    # executableToolDepends = [
+    # buildTools = [
+    buildDepends = [
+      hpkgs.ghc-mod
+      hpkgs.hasktags
+      hpkgs.haskdogs  # stack config set system-ghc --global true
+      hpkgs.hdevtools
+      hpkgs.hlint
+      hpkgs.pointfree
+      hpkgs.pointful
       /* hpkgs.stack */
     ];
     # extraLibraries = [ reflex-dom-htmlea ];
-    # buildDepends = [ reflex-dom-htmlea ];
     # setupHaskellDepends = [ reflex-dom-htmlea ];
     # pkgconfigDepends = [ reflex-dom-htmlea ];
-    /* executableHaskellDepends = [ */
-    /* ]; */
   };
 
   adjust =
@@ -126,3 +127,4 @@ let
    pkgs.haskell.lib.overrideCabal sevenGuis-reflex-code-base adjust;
 in
   sevenGuis-reflex-code
+

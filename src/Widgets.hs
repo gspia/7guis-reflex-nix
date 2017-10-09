@@ -19,8 +19,8 @@ import           Text.Read        (readMaybe)
 
 import           Utils
 
-import           Reflex.Dom.HTML5.Elements (eButtonD')
-import           Reflex.Dom.HTML5.Attrs (disabled, style)
+import           Reflex.Dom.HTML5.Elements (eButtonD', ETextArea)
+import           Reflex.Dom.HTML5.Attrs (disabled, style, attrMap)
 
 
 readableInput :: (MonadWidget t m, Read a) => TextInputConfig t -> m (Event t a)
@@ -54,10 +54,11 @@ datePicker enabled = do
         -- date <- mapDyn ((parseTimeM True defaultTimeLocale "%F") . T.unpack) $ _textInput_value raw
         date <- (return . fmap ((parseTimeM True defaultTimeLocale "%F") . T.unpack)) $ _textInput_value raw
         attrs <- dynCombine date enabled $ \d e ->
-          -- monoidGuard (isNothing d) (style "color: red" $ def) <>
-          -- monoidGuard (not e) (disabled def)
-          monoidGuard (isNothing d) ("style" =: "color: red") <>
-          monoidGuard (not e) ("disabled" =: "disabled")
+          attrMap $ -- we need this to get the map from ETextArea
+            monoidGuard (isNothing d) (style "color: red" $ def) <>
+            monoidGuard (not e) (disabled $ def :: ETextArea )
+          -- monoidGuard (isNothing d) ("style" =: "color: red") <>
+          -- monoidGuard (not e) ("disabled" =: "disabled")
     return date
 
 selectableList :: (MonadWidget t m, Ord k)
