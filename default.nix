@@ -112,8 +112,10 @@ let
           initialNixpkgs.pkgs.fetchFromGitHub { 
             owner  = "gspia";
             repo   = "reflex-dom-htmlea";
-            rev = "502b7f1478a65f643af3391ba8d0df1883872aff";
-            sha256 = "1w7qp2kpfp0ivm5xlfafsik21wx7yhh3q7prdn369b1p3zrni5cr";
+            rev = "49bb339a6142188482c88a8ab55dfc71206ed9f6";
+            sha256 = "1qk7szm923whnalbqy9gwq4wcazz1lyh4r1iz4b86ab6kw1hrk98";
+            /* rev = "502b7f1478a65f643af3391ba8d0df1883872aff"; */
+            /* sha256 = "1w7qp2kpfp0ivm5xlfafsik21wx7yhh3q7prdn369b1p3zrni5cr"; */
           }
       ) { } );
     });
