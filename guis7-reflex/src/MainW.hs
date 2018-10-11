@@ -1,10 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE UnicodeSyntax #-}
+{-# LANGUAGE MonoLocalBinds #-}
 
 module MainW where
 
 import           Reflex.Dom.Core (MonadWidget, mainWidgetWithCss,
                                  el, text)
-
 import           Control.Monad.IO.Class    (liftIO)
 
 import           Data.Monoid ((<>))
@@ -23,11 +24,11 @@ import           GUIs.Timer (timer)
 import Language.Javascript.JSaddle (JSM)
 
 
--- mainW :: UTCTime -> JSM ()
+-- mainW ∷ UTCTime → JSM ()
 -- mainW tStart = do
-mainW :: JSM ()
+mainW ∷ JSM ()
 mainW = do
-  tStart <- liftIO getCurrentTime
+  tStart ← liftIO getCurrentTime
   -- mainWidget $ do
   -- mainWidgetWithCss css $ do
   mainWidgetWithCss (encodeUtf8 css) $ do
@@ -50,7 +51,7 @@ mainW = do
   -- where
   --   css = $(embedFile "index.css")
 
-header :: MonadWidget t m => Text -> m ()
+header ∷ MonadWidget t m ⇒ Text → m ()
 header = el "h1" . text
 
 -- On vim:
@@ -61,7 +62,7 @@ header = el "h1" . text
 -- and manually correcting font-family -line and the first line.
 -- Somehow, the multiline-thing with \ at the end and start didn't work.
 -- (Probably some minor thing for which I was blind.)
-css :: Text
+css ∷ Text
 css = "body, input, button, select {\n"
   <> "  font-size: 12pt;\n"
   <> "  line-height: 1.6;\n"

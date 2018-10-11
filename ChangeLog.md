@@ -1,5 +1,12 @@
 # Revision history for 7guis-reflex-nix
 
+## 0.1.1.3  - 2018-10-11
+
+* Update to work with new relfex-platform (ghcjs 8.4 and ghc 8.4)
+* Start using the project setup (cabal file reorg)
+* Update to use newer reflex-dom-htmlea.
+* Some minor changes
+
 ## 0.1.1.0  - 2017-09-26
 
 * Cabal file reorganization

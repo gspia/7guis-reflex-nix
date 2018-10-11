@@ -1,0 +1,6 @@
+compiler: ghcjs
+packages:
+    guis7-reflex/
+    guis7-reflex-js/
+    
+

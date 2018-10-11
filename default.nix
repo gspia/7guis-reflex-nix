@@ -1,132 +1,45 @@
-{ reflex-platform ? import ./reflex-platform.nix
-# , reflex-dom-htmlea ? import ./reflex-dom-htmlea.nix
-# , reflex-dom-htmlea ? (import <nixpkgs> {}).haskellPackages.reflex-dom-htmlea
-, compiler ? "ghcjs"
-} :
-# , reflex-dom-htmlea ? import ./reflex-dom-htmlea.nix
-# Note that default has ghcjs as default compiler while 
-# shell.nix has ghc. This way we can use ghcid and some other tools
-# while developing (e.g. using the work-on ghc -script).
-# nix-build uses default.nix and thus ghcjs.
-let
-  initialNixpkgs = import <nixpkgs> {};
-
-  /* sources = { */
-  /*   reflex-platform = initialNixpkgs.pkgs.fetchFromGitHub { */
-  /*     owner  = "reflex-frp"; */
-  /*     repo   = "reflex-platform"; */
-  /*     rev    = "b7c00b3574d0ef42974eda0f2812c794c7b5d4f3"; */
-  /*     sha256 = "1jfz17y2fq051caby4y4aslxrpvgwwa30ivfw0l5wn5pp5zlrpad"; */
-  /*   }; */
+{}:
+(import ./reflex-platform {}).project ({ pkgs, ... }: {
+  packages = {
+    guis7-reflex  = ./guis7-reflex;
+    guis7-reflex-kit  = ./guis7-reflex-kit;
+    guis7-reflex-wai  = ./guis7-reflex-wai;
+    guis7-reflex-js  = ./guis7-reflex-js;
+  };
+  overrides = self: super: {
+    reflex-dom-htmlea = self.callCabal2nix "reflex-dom-htmlea"
+      # ../reflex-dom-htmlea {};  /* use this when doing things locally */
+      (pkgs.fetchFromGitHub {
+        owner = "gspia";
+        repo = "reflex-dom-htmlea";
+        rev = "2900ca4a6840c2362fe56cd9b6cdf7744a646fdd";
+        sha256 = "06hjrpnv9314dfdl18a0sm7dxwcx8ps278bfc330h39wb9c7iqi9";
+      }) {};
+  };
+  # android.exampleTbl = {
+  #   executableName = "exampleTbl";
+  #   applicationId = "org.example.exampleTbl";
+  #   displayName = "Example Tables App";
+  # };
+  /* ios.keyboard = { */
+  /*   executableName = "keyboard"; */
+  /*   bundleIdentifier = "org.example.keyboard"; */
+  /*   bundleName = "Example iOS App (keyboard ex)"; */
   /* }; */
-  /* reflex-platform = import sources.reflex-platform {}; */
 
-  pkgs  = reflex-platform.nixpkgs.pkgs;
-  hpkgs = initialNixpkgs.pkgs.haskellPackages;
-  hLib =  initialNixpkgs.haskell.lib;
-
-  indexHtml = ''
-    <!DOCTYPE html>
-    <html>
-      <head>
-         <title>7GUIs with Reflex DOM and htmlea</title>
-         <link rel="stylesheet" href="index.css">
-      </head>
-      <body>
-      </body>
-      <script language="javascript" src="js/7guis-reflex-js.min.js"></script>
-
-    </html>
-  '';
-
-  adjust-for-ghcjs = drv: {
-    executableSystemDepends = [
-      hpkgs.cabal-install
-    ];
-    executableToolDepends = [pkgs.closurecompiler pkgs.zopfli];
-    # extraLibraries = [ reflex-dom-htmlea ];
-    # buildDepends = [ reflex-dom-htmlea ];
-    # setupHaskellDepends = [ reflex-dom-htmlea ];
-    # pkgconfigDepends = [ reflex-dom-htmlea ];
-    doHaddock = false;
-    postInstall = ''
-      mkdir -p $out
-      mkdir -p $out/js
-      cp $out/bin/7guis-reflex-js.jsexe/all.js $out/js/7guis-reflex-js.js
-      cd $out/bin/7guis-reflex-js.jsexe
-      closure-compiler all.js --compilation_level=ADVANCED_OPTIMIZATIONS --isolation_mode=IIFE --assume_function_wrapper --jscomp_off="*" --externs=all.js.externs > $out/js/7guis-reflex-js.min.js
-      # rm -Rf $out/bin
-     cat <<EOF > $out/index.html
-       ${indexHtml}
-     EOF
-    '';
+  shells = {
+    ghc   = [ "guis7-reflex" "guis7-reflex-wai" "guis7-reflex-kit" ];
+    ghcjs = [ "guis7-reflex" "guis7-reflex-js"];
   };
-# Note that if editor makes comments with the /* */, then inside the above shell 
-# script (the above '' ''-block) those /**/-blocks are not recognized as comments.
-# In nix-lang /* */ work as comments.
-  #    rm -Rf $out/bin/short.jsexe
-  #    cd $out/js
-  #    gzip short.min.js
-  # zopfli is gzip on steroids.
-  #    zopfli -i1000 short.min.js
-  #installPhase = ''
-  #  mkdir $out
-  #  cp -r ./* $out/
-  #'';
-  # phase = ["unpackPhase" "buildPhase" "installPhase"];
-  adjust-for-ghc = drv: {
-    executableSystemDepends = [
-      reflex-platform.${compiler}.ghcid
-      reflex-platform.${compiler}.cabal-install
-    ];
-    # executableToolDepends = [
-    # buildTools = [
-    buildDepends = [
-      hpkgs.ghc-mod
-      hpkgs.hasktags
-      hpkgs.haskdogs  # stack config set system-ghc --global true
-      hpkgs.hdevtools
-      hpkgs.hlint
-      hpkgs.pointfree
-      hpkgs.pointful
-      /* hpkgs.stack */
-    ];
-    # extraLibraries = [ reflex-dom-htmlea ];
-    # setupHaskellDepends = [ reflex-dom-htmlea ];
-    # pkgconfigDepends = [ reflex-dom-htmlea ];
-  };
-
-  adjust =
-    if compiler == "ghcjs"
-    then adjust-for-ghcjs
-    else adjust-for-ghc;
-
-  haskellPackages = reflex-platform.${compiler}.override {
-    overrides = (self: super: {
-      ghc = super.ghc // { withPackages = super.ghc.withHoogle; };
-      ghcWithPackages = self.ghc.withPackages;
-      /* reflex-dom-htmlea = hLib.dontHaddock */ 
-      /*   (hLib.dontCheck (self.callCabal2nix "reflex-dom-htmlea" ( */
-      reflex-dom-htmlea = hLib.dontHaddock 
-        (self.callCabal2nix "reflex-dom-htmlea" (
-          initialNixpkgs.pkgs.fetchFromGitHub { 
-            owner  = "gspia";
-            repo   = "reflex-dom-htmlea";
-            rev = "49bb339a6142188482c88a8ab55dfc71206ed9f6";
-            sha256 = "1qk7szm923whnalbqy9gwq4wcazz1lyh4r1iz4b86ab6kw1hrk98";
-            /* rev = "502b7f1478a65f643af3391ba8d0df1883872aff"; */
-            /* sha256 = "1w7qp2kpfp0ivm5xlfafsik21wx7yhh3q7prdn369b1p3zrni5cr"; */
-          }
-      ) { } );
-    });
-  };
-  sevenGuis-reflex-code-base = 
-    haskellPackages.callPackage ./7guis-reflex.nix { 
-      inherit compiler; 
-      /* inherit reflex-dom-htmlea; */ 
-    };
-  sevenGuis-reflex-code = 
-   pkgs.haskell.lib.overrideCabal sevenGuis-reflex-code-base adjust;
-in
-  sevenGuis-reflex-code
-
+  tools = ghc: with ghc; [
+    pkgs.haskellPackages.hlint
+    # pkgs.haskellPackages.hasktags
+    # pkgs.haskellPackages.haskdogs
+    # pkgs.haskellPackages.hdevtools 
+    # pkgs.haskellPackages.hindent
+    # pkgs.haskellPackages.hsimport
+    # pkgs.haskellPackages.pointfree
+    # pkgs.haskellPackages.pointful
+    # pkgs.haskellPackages.stylish-haskell
+  ];
+})

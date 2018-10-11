@@ -1,2 +1,3 @@
-:set -isrc:exe
-:load exe-wai/Main
+:set -iguis7-reflex/src:guis7-reflex-kit/Main.hs
+-- :guis7-reflex-wai/Main.hs
+-- :load exe-wai/Main

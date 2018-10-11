@@ -31,78 +31,39 @@ scroll-position seems to affect, can be seen with ghcjs and ghc). With
 `wrapDomEvent` it works ok.
 
 
-## Installation and building (mostly TBD/WIP-things ATM)
+## Installation and building 
 
+First, get the repo with `git clone` and `cd` into the directory, and after that make sure that the reflex-platform is in place:
 
-First, 
 ```
-git clone https://github.com/gspia/7guis-reflex-nix.git
-```
-after which you can:
-```
-nix-build 
-```
-or 
-```
-nix-shell 
-nix-shell --argstr compiler ghcjs
-nix-build --argstr compiler ghc
+git submodule update --init --recursive
 ```
 
+To build with GHC, use the `nix-shell` command to enter the sandbox shell and use cabal (which is supplied by the sandbox):
 
-### TBD/WIP
+```
+nix-shell -A shells.ghc
+cabal new-build all
+```
 
+To build with GHCJS:
 
-First, 
 ```
-git clone https://github.com/gspia/7guis-reflex-nix.git
+nix-shell -A shells.ghcjs
+cabal --project-file=cabal-ghcjs.project --builddir=dist-ghcjs new-build all
 ```
-after which you have the following four options.
 
-  1) use the work-on -script provided at reflex-platform
-  2) nix-build with ghcjs as default compiler
-  3) nix-shell with ghc as default compiler
-  4) nix-shell with ghcjs 
+For further information, see the following
+- [project-development documentation](https://github.com/reflex-frp/reflex-platform/blob/develop/docs/project-development.md)
+- [blanket project derivation (default.nix)](https://github.com/reflex-frp/reflex-platform/blob/develop/project/default.nix)
+- [reflex-project-skeleton](https://github.com/ElvishJerricco/reflex-project-skeleton)
 
+Note that if you have already obtained repo but want to update the 
+reflex-platform, you can try, e.g.,
 
-The first one requires obtaining
-[reflex-platform](https://github.com/reflex-frp/reflex-platform).  
+```
+git submodule foreach "(git checkout develop; git pull --recurse-submodules)&"
+```
 
-The following commands work (items 1,2 and 3 above)
-```
-path-to-reflex-platform/work-on ghc ./7guis-reflex.nix
-nix-build
-nix-shell
-```
-while
-```
-path-to-reflex-platform/work-on ghcjs ./7guis-reflex.nix
-path-to-reflex-platform/work-on ghcjs ./7guis-reflex.nix --argstr "compiler" "ghcjs" --argstr "ghcjs-base" "ghcjs-base"
-```
-don't. Note that
-```
-nix-shell --argstr "compiler" "ghcjs" 
-```
-does work, this is the item 4) above. In this case, in nix-shell, it is 
-possible to
-```
-cabal configure --ghcjs
-cabal build
-```
-and results can be found somewhere from dist-directory.
+(Note that the above command gets the develop-branch of the platform.)
 
-If using 1), that is, `path-to-reflex-platform/work-on ghc ./7guis-reflex.nix`
-then you can start 
-```
-./dev-server.sh
-```
-which starts ghcid and auto-updates web page (results) at localhost:8000.
-```
-cabal configure
-cabal build
-```
-can be used (there are two exes, one is the same that dev-server is 
-using, the wai-one, and another using webkit2gtk).
-
-The item 2) makes a result-directory and there you may find
-the index.html and js-files.
